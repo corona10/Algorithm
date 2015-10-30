@@ -50,15 +50,17 @@ int main(int argc, const char * argv[]) {
          {0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0}
         ,{0, 1, 1, 0, 0, 0, 1, 0, 0, 0}
         ,{1, 1, 0, 0, 0, 0, 1, 0, 0 ,0}
-        ,{0, 1, 1, 1, 0, 1, 1, 1, 0, 0}
+        ,{0, 1, 1, 0, 0, 1, 1, 1, 0, 0}
         ,{0, 0, 0, 0, 0, 0, 1 ,0 ,0, 0}
         ,{0, 0, 0, 0, 0, 0, 0, 1, 0, 0}
-        ,{0, 0, 0, 0, 0, 0, 0, 1, 0, 0}
+        ,{0, 0, 1, 1, 1, 0, 0, 1, 0, 0}
         ,{0, 0, 0, 0, 0, 0, 0, 1, 0, 0}
         ,{0, 0, 0, 0, 0, 0, 0, 1, 0, 0}
         ,{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     };
     print_map(map);
+    std::cout<<"* Start point: ("<<start.x<<", "<<start.y<<")"<<std::endl;
+    std::cout<<"* Destination point: ("<<end.x<<", "<<end.y<<")"<<std::endl;
     std::cout<<"====== Now A* Path Finding.. ======="<<std::endl;
     astar_path(map, start, end);
     print_map(map);
@@ -152,6 +154,11 @@ void astar_path(int (*map)[map_size], position st, position end)
     {
         current = open_list.front();
         
+        if(current->x == endNode->x && current->y == endNode->y)
+        {
+            std::cout<<"* ("<<endNode->x<<", "<<endNode->y<<") Found!!"<<std::endl;
+            break;
+        }
         // Add Node for 6 direction
         Node *d1 = new Node(current->x -1 , current->y - 1),
         *d2 = new Node(current->x -1 , current->y   ),
@@ -176,11 +183,11 @@ void astar_path(int (*map)[map_size], position st, position end)
                 open_list.push_back(d1);
             }else{
                 if(current-> f >= d1->f)
-                    d1->parent = current;;
+                    d1->parent = current;
             }
         }
         
-        if(validNode(d2) && !isInList(closed_list, d2) && map[d2->x][d2->y] == 0)
+        if(validNode(d2) && !isInList(closed_list, d2) && map[d2->x][d2->y] != 1)
         {
             if(!isInList(open_list, d2))
             {
@@ -191,7 +198,7 @@ void astar_path(int (*map)[map_size], position st, position end)
                     d2->parent = current;
             }
         }
-        if(validNode(d3) && !isInList(closed_list, d3) && map[d3->x][d3->y] == 0)
+        if(validNode(d3) && !isInList(closed_list, d3) && map[d3->x][d3->y] != 1)
         {
             if(!isInList(open_list, d3))
             {
@@ -202,7 +209,7 @@ void astar_path(int (*map)[map_size], position st, position end)
                     d3->parent = current;
             }
         }
-        if(validNode(d4) && !isInList(closed_list, d4) && map[d4->x][d4->y] == 0)
+        if(validNode(d4) && !isInList(closed_list, d4) && map[d4->x][d4->y] != 1)
         {
             if(!isInList(open_list, d4))
             {
@@ -213,7 +220,7 @@ void astar_path(int (*map)[map_size], position st, position end)
                     d4->parent = current;
             }
         }
-        if(validNode(d5) && !isInList(closed_list, d5) && map[d5->x][d5->y] == 0)
+        if(validNode(d5) && !isInList(closed_list, d5) && map[d5->x][d5->y] != 1)
         {
             if(!isInList(open_list, d5))
             {
@@ -224,7 +231,7 @@ void astar_path(int (*map)[map_size], position st, position end)
                     d5->parent = current;
             }
         }
-        if(validNode(d6) && !isInList(closed_list, d6) && map[d6->x][d6->y] == 0)
+        if(validNode(d6) && !isInList(closed_list, d6) && map[d6->x][d6->y] != 1)
         {
             if(!isInList(open_list, d6))
             {
@@ -250,9 +257,12 @@ void astar_path(int (*map)[map_size], position st, position end)
             map[current->x][current->y] = 2;
             delete current;
             break;
+        }else if(current->x == endNode->x && current->x == endNode->y)
+        {
+            map[current->x][current->y] = 3;
+        }else{
+            map[current->x][current->y] = 4;
         }
-        
-        map[current->x][current->y] = 4;
         Node* old = current;
         current = current->parent;
         delete  old;
